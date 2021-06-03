@@ -1,23 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setFoodAction } from "./actions/foodAction";
+import "./App.css";
+import Foods from "./components/Foods";
+import Header from "./components/Header";
 
 function App() {
+  const APP_ID = "50cf5325";
+  const APP_KEY = "fb4a0907b1ac83964e3da8b44d04998d";
+  const [search, setSearch] = useState("chiken");
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getFood = async () => {
+      const res = await axios.get(
+        `https://api.edamam.com/search?q=${search}&app_id=${APP_ID}&app_key=${APP_KEY}`
+      );
+      dispatch(setFoodAction(res.data.hits));
+    };
+    getFood();
+  }, [search, dispatch]);
+
+  const onClickSubmit = async () => {
+    const res = await axios.get(
+      `https://api.edamam.com/search?q=${search}&app_id=${APP_ID}&app_key=${APP_KEY}`
+    );
+    dispatch(setFoodAction(res.data.hits));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
+    <div>
+      <Header setSearch={setSearch} onClickSubmit={onClickSubmit} />
+      <Foods />
+      <footer>
+        Developed by{" "}
+        <a href="https://rashed-abir.web.app/" target="_blank" rel="noreferrer">
+          Rashed Abir
         </a>
-      </header>
+      </footer>
     </div>
   );
 }
